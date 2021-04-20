@@ -118,10 +118,24 @@ The ensembled algorithms were ['LightGBM', 'LightGBM', 'LightGBM', 'LightGBM', '
 iterations were ensembled together to produce the final result of 100% accuracy!  
 Feature importance for this run had gill-color at the highest importance with a weight of 1.3 followed by spore-print-color at 0.6 and population 
 at 0.43. This showed me that both types of encoding would get me to an accuracy of 100% but the features and weights that comprised those models 
-were very different.  
+were very different. 
+ 
+One Hot Encoded Feature Importance
+<img src="Screenshots/OHC.PNG"
+     alt="One Hot Encoded Feature Importance" />
+	 
+Label Encoded Feature Importance
+<img src="Screenshots/lc.PNG"
+     alt="Label Encoded Feature Importance" />
+
 It is interesting to note that before I removed veil-color and gill-attachment from the data, odor was the feature with the highest importance for 
 the label encoded run as well with an accuracy of 100% but once those features were removed, it changed to gill color. I'm not quite sure why this 
-is but if I had more time, I would explore this phenomenon.  
+is but if I had more time, I would explore this phenomenon.
+As I have reached 100% accuracy with my automl run, the best way to improve on this project is to obtain more data and see if my model still holds 
+up. Just because it was able to predict with 100% accuracy on the data available does not mean that it is failproof or it can accurately predict 
+whether or not mushrooms with different combinations of qualities are edible or poisonous. More data is needed to properly ascertain the accuracy 
+and effectiveness of this model. I would also explore what would happen if I removed / added more features / attributes of the mushrooms because 
+even removing a couple changed the results of my models.
 
 I ultimately decided to go with the Label Encoded run as my best model because it weighted the features more evenly while still producing results 
 of 100% accuracy.
@@ -164,7 +178,21 @@ for keep probability but they also returned slightly lower accuracy than the def
 ### Results <a name="hyper-results" />
 The results of my hyperdrive model gave me an accuracy of 0.963 with a learning rate of 9.83986 and a keep probability of 0.05649. The results of 
 the other runs with higher and lower learning rate and keep probabilities produced models with accuracies of 0.962 at their best but the parameter 
-ranges of normal(10,3) and normal(0.05,0.1) for learning rate and keep probability respectively just edged out the other ranges.  
+ranges of normal(10,3) and uniform(0.05,0.1) for learning rate and keep probability respectively just edged out the other ranges.  In the following 
+screenshots, you can see the different parameter ranges I tried and which ones produced the best model.
+
+{"learning_rate":["normal",[10,3]],"keep_probability":["uniform",[0.05,0.1]]}
+<img src="Screenshots/hyper-best.PNG"
+     alt="Hyperdrive Best Model" />
+
+{"learning_rate":["normal",[11,3]],"keep_probability":["uniform",[0.01,0.15]]}
+<img src="Screenshots/hyper-2.PNG"
+     alt="Hyperdrive Less Good" />
+	 
+{"learning_rate":["normal",[8,3]],"keep_probability":["uniform",[0.01,0.09]]}
+<img src="Screenshots/hyper-3.PNG"
+     alt="Hyperdrive Less Good" />
+
 I could have improved this model by exploring even more combinations of ranges and maybe narrowing down the ranges once I knew the general 
 vicinity of the best values. Maybe these parameter values are local maxes and 100% accuracy is achievable with logistic regression but the ranges 
 are something completely different. This hyperdrive run really just gave me the starting point and if I were to refine this project in the future, 
@@ -180,13 +208,55 @@ Best Model
      alt="Best Model Hyperdrive" />
 
 ## Model Deployment <a name="deploy" />
-*TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
+I took my AutoML Label encoded model and reigstered it to AzureML so it would be available for deployment. I then deployed that model via 
+ACIWebService with the bare minimum for cpu cores and memory because this model will most likely not be utilized heavily or in such a manner that 
+requires more resources considering it needs to be deleted for this project.
+
+In order to query my endpoint with a sample input, you first need to convert your input fields from strings to ints.  
+The conversion method is to match up the string inputs from the dataset with label encoded values from this list:
+class ['e' 'p']  
+cap-shape ['b' 'c' 'f' 'k' 's' 'x']  
+cap-surface ['f' 'g' 's' 'y']  
+cap-color ['b' 'c' 'e' 'g' 'n' 'p' 'r' 'u' 'w' 'y']  
+bruises [False  True]  
+odor ['a' 'c' 'f' 'l' 'm' 'n' 'p' 's' 'y']  
+gill-spacing ['c' 'w']  
+gill-size ['b' 'n']  
+gill-color ['b' 'e' 'g' 'h' 'k' 'n' 'o' 'p' 'r' 'u' 'w' 'y']  
+stalk-shape ['e' 't']  
+stalk-root ['?' 'b' 'c' 'e' 'r']  
+stalk-surface-above-ring ['f' 'k' 's' 'y']  
+stalk-surface-below-ring ['f' 'k' 's' 'y']  
+stalk-color-above-ring ['b' 'c' 'e' 'g' 'n' 'o' 'p' 'w' 'y']  
+stalk-color-below-ring ['b' 'c' 'e' 'g' 'n' 'o' 'p' 'w' 'y']  
+veil-color ['n' 'o' 'w' 'y']  
+ring-number ['n' 'o' 't']  
+ring-type ['e' 'f' 'l' 'n' 'p']  
+spore-print-color ['b' 'h' 'k' 'n' 'o' 'r' 'u' 'w' 'y']  
+population ['a' 'c' 'n' 's' 'v' 'y']  
+habitat ['d' 'g' 'l' 'm' 'p' 'u' 'w']  
+
+For example, if you wanted to have an input with cap shape b and habitat g, you would use the index of the value in its list as its int 
+representation so cap shape would become 0 and habitat would be 1 because of their respective positions in their respective lists.
+Once you have the payload in json format, you can then ping the endpoint with a POST request containing the aci service scoring URI and the data 
+with appropriate headers.
+Example:  
+resp = requests.post(aci_service.scoring_uri, json_data, headers=headers)
+
+predicted_values = json.loads(json.loads(resp.text))['result']
+
+Another way of testing the endpoint with input data is to go to the deployed endpoints tab in AzureML Studio and under test, you can manually 
+input the values you want to test. I will showcase this method in the screencast as well. Under the consume tab, it also gives you code on how to 
+query the endpoint with a JSON payload.
+
+Model Endpoint Healthy and Deployed
+<img src="Screenshots/model-endpoint.PNG"
+     alt="Deployed Endpoint" />
 
 ## Screen Recording <a name="screencast" />
-*TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
-- A working model
-- Demo of the deployed  model
-- Demo of a sample request sent to the endpoint and its response
+Screencast Link: https://youtu.be/ILG3TDsDJ4k
 
 ## Standout Suggestions <a name="standout" />
-*TODO (Optional):* This is where you can provide information about any standout suggestions that you have attempted.
+I tried to make my model onxx compatible but I was unable to make it work. This is an issue I've run into this entire course. On the documentation 
+for AutoML Settings, it has enable_onxx_compatible_models as a valid parameter but when I tried to use it in practice, it kept throwing warnings 
+that the parameter was not recognized. I'm believe the documentation might be out of date or maybe the interaction has changed.

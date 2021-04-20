@@ -8,20 +8,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import pandas as pd
 from azureml.core.run import Run
-from azureml.data.dataset_factory import TabularDatasetFactory
-
+from azureml.core import Dataset
 
 def clean_data(data):
-    
-    #Label Encoding
-    for col in data.columns:
-    label_encoder = LabelEncoder()
-    feature = data[str(col)]
-    label_encoder.fit(feature)
-    data[str(col)] = label_encoder.transform(feature)
-    
+    #Convert data to pandas dataframe and convert bruises to Boolean field
+    df = data.to_pandas_dataframe().dropna()
+    df["bruises"] = df.bruises.apply(lambda x: True if x =='t' else False)
+
     #Delete veil type because there is only one value for all entries
-    del data['veil-type']
+    del df['veil-type']
+    del df['gill-attachment']
+
+    #Label Encoding
+    for col in df.columns:
+        label_encoder = LabelEncoder()
+        feature = df[str(col)]
+        label_encoder.fit(feature)
+        df[str(col)] = label_encoder.transform(feature)
     
     #Split encoded data into independent and dependent variables to scale dependent data
 
@@ -30,13 +33,12 @@ def clean_data(data):
 
     #Standardization of Features for Label Encoded Data
     scaler = StandardScaler()
-
-    lc_x = pd.DataFrame(scaler.fit_transform(lc_x), columns = lc_x.columns)
+    x_lc = pd.DataFrame(scaler.fit_transform(x_lc), columns = x_lc.columns)
 
     return x_lc,y_lc
     
 #Create / Clean Dataset
-datapath = "./mushroom_classification/mushrooms.csv"
+datapath = "https://raw.githubusercontent.com/huxfrank/nd00333-capstone/master/starter_file/mushroom-classification/mushrooms.csv"
 ds = Dataset.Tabular.from_delimited_files(datapath)
 
 x , y = clean_data(ds)

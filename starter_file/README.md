@@ -191,7 +191,7 @@ screenshots, you can see the different parameter ranges I tried and which ones p
 	 
 {"learning_rate":["normal",[8,3]],"keep_probability":["uniform",[0.01,0.09]]}
 <img src="Screenshots/hyper-3.PNG"
-     alt="Hyperdrive Less Good" />
+     alt="Hyperdrive No Bueno" />
 
 I could have improved this model by exploring even more combinations of ranges and maybe narrowing down the ranges once I knew the general 
 vicinity of the best values. Maybe these parameter values are local maxes and 100% accuracy is achievable with logistic regression but the ranges 

@@ -24,8 +24,8 @@ Mushroom drawn from The Audubon Society Field Guide to North American Mushrooms 
 definitely poisonous, or of unknown edibility and not recommended. This latter class was combined with the poisonous one. The Guide clearly states 
 that there is no simple rule for determining the edibility of a mushroom; no rule like "leaflets three, let it be'' for Poisonous Oak and Ivy." 
 
-Here is a diagram of high level architecture showcasing the basic workflow of the model training process.
-High Level Architecture
+Here is a diagram of high level architecture showcasing the basic workflow of the model training process.  
+High Level Architecture  
 <img src="Screenshots/architecture.PNG"
      alt="High Level Architecture" />
 
@@ -256,9 +256,9 @@ query the endpoint with a JSON payload.
 
 Registered Model
 <img src="Screenshots/model-register.PNG"
-     alt="Registered Model" />
+     alt="Registered Model" />  
 
-Run Registered Models
+Run Registered Models  
 <img src="Screenshots/model-register2.PNG"
      alt="Registered Model" />
 

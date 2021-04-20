@@ -24,6 +24,11 @@ Mushroom drawn from The Audubon Society Field Guide to North American Mushrooms 
 definitely poisonous, or of unknown edibility and not recommended. This latter class was combined with the poisonous one. The Guide clearly states 
 that there is no simple rule for determining the edibility of a mushroom; no rule like "leaflets three, let it be'' for Poisonous Oak and Ivy." 
 
+Here is a diagram of high level architecture showcasing the basic workflow of the model training process.
+High Level Architecture
+<img src="Screenshots/architecture.PNG"
+     alt="High Level Architecture" />
+
 ## Project Set Up and Installation <a name="setup" />
 My project has no special installation steps. I ran it on my personal AzureML account on my local machine. The notebooks are written so it can be 
 run on any valid AzureML subscription.  
@@ -248,6 +253,14 @@ predicted_values = json.loads(json.loads(resp.text))['result']
 Another way of testing the endpoint with input data is to go to the deployed endpoints tab in AzureML Studio and under test, you can manually 
 input the values you want to test. I will showcase this method in the screencast as well. Under the consume tab, it also gives you code on how to 
 query the endpoint with a JSON payload.
+
+Registered Model
+<img src="Screenshots/model-register.PNG"
+     alt="Registered Model" />
+
+Run Registered Models
+<img src="Screenshots/model-register2.PNG"
+     alt="Registered Model" />
 
 Model Endpoint Healthy and Deployed
 <img src="Screenshots/model-endpoint.PNG"

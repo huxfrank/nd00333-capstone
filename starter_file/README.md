@@ -265,6 +265,10 @@ Run Registered Models
 Model Endpoint Healthy and Deployed
 <img src="Screenshots/model-endpoint.PNG"
      alt="Deployed Endpoint" />
+	 
+Environment file generated for my local machine
+<img src="Screenshots/env.PNG"
+     alt="Local Machine Environment File" />
 
 ## Screen Recording <a name="screencast" />
 Screencast Link: https://youtu.be/ILG3TDsDJ4k
